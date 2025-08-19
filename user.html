@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Rewards Bot</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:Arial;background:#f5f5f5;margin:0;padding:0;}
+header{background:#6200ea;color:#fff;padding:15px;text-align:center;}
+.activate-btn{background:#ff4081;color:#fff;border:none;padding:12px 20px;border-radius:8px;font-size:16px;}
+section{padding:20px;}
+.task{background:#fff;padding:15px;border-radius:10px;margin-bottom:10px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+footer{position:fixed;bottom:0;left:0;width:100%;background:#fff;display:flex;justify-content:space-around;border-top:1px solid #ddd;padding:10px 0;}
+footer button{background:none;border:none;font-size:14px;color:#333;}
+.hidden{display:none;}
+.box{background:#fff;padding:15px;border-radius:10px;margin-top:15px;box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+input{width:100%;padding:10px;margin:10px 0;border:1px solid #ccc;border-radius:6px;}
+.confirm-btn{background:#4caf50;color:#fff;border:none;padding:10px 18px;border-radius:6px;cursor:pointer;}
+</style>
+</head>
+<body>
+<header>
+<h2>💰 Rewards Bot</h2>
+<button id="activateBtn" class="activate-btn" onclick="showPaymentOptions()">🔓 একাউন্ট একটিভ</button>
+</header>
+
+<section>
+<h3>📋 আজকের টাস্ক</h3>
+<div class="task">▶️ YouTube Video দেখুন – <b id="rewardView">৳10</b></div>
+<div class="task">🔔 YouTube Subscribe করুন – <b id="rewardSub">৳10</b></div>
+<div class="task">👥 Telegram Group Join করুন – <b id="rewardJoin">৳10</b></div>
+
+<div id="paymentBox" class="box hidden">
+<h3>একাউন্ট একটিভ করতে মাধ্যম বেছে নিন</h3>
+<button onclick="selectMethod('বিকাশ')">📱 বিকাশ</button>
+<button onclick="selectMethod('নগদ')">💳 নগদ</button>
+
+<div id="detailsBox" class="hidden">
+<p id="paymentText"></p>
+<input type="text" id="trxId" placeholder="আপনার ট্রানজেকশন আইডি লিখুন">
+<button class="confirm-btn" onclick="confirmActivation()">✅ কনফার্ম</button>
+</div>
+</div>
+
+<div id="successBox" class="box hidden">
+<h3>✅ অভিনন্দন!</h3>
+<p>আপনার একাউন্ট এখন <b>Active</b> হয়ে গেছে 🎉</p>
+</div>
+</section>
+
+<footer>
+<button>🏠 হোম</button>
+<button>💼 চাকরি</button>
+<button>💳 একাউন্ট</button>
+<button>⬇️ উইড্র</button>
+<button>⬆️ ডিপোজিট</button>
+</footer>
+
+<script>
+function loadSettings(){
+  let settings = JSON.parse(localStorage.getItem("adminSettings")) || {
+    bkash:"01XXXXXXXXX", nagad:"01YYYYYYYYY", fee:20, reward:10
+  };
+  document.getElementById("rewardView").innerText = "৳"+settings.reward;
+  document.getElementById("rewardSub").innerText = "৳"+settings.reward;
+  document.getElementById("rewardJoin").innerText = "৳"+settings.reward;
+  return settings;
+}
+
+let settings = loadSettings();
+let selectedMethod = null;
+
+function showPaymentOptions(){
+  document.getElementById("paymentBox").classList.remove("hidden");
+}
+
+function selectMethod(method){
+  selectedMethod = method;
+  let number = method === "বিকাশ" ? settings.bkash : settings.nagad;
+  document.getElementById("paymentText").innerText =
+    method + " এ " + settings.fee + " টাকা সেন্ড মানি করুন নম্বরে: " + number;
+  document.getElementById("detailsBox").classList.remove("hidden");
+}
+
+function confirmActivation(){
+  let trx = document.getElementById("trxId").value.trim();
+  if(trx.length < 5){ alert("সঠিক ট্রানজেকশন আইডি দিন!"); return; }
+  localStorage.setItem("isActive", "true");
+  document.getElementById("paymentBox").classList.add("hidden");
+  document.getElementById("successBox").classList.remove("hidden");
+  document.getElementById("activateBtn").style.display="none";
+}
+
+window.onload = function(){
+  if(localStorage.getItem("isActive")==="true"){
+    document.getElementById("successBox").classList.remove("hidden");
+    document.getElementById("activateBtn").style.display="none";
+  }
+}
+</script>
+</body>
+</html>
